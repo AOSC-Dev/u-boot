@@ -57,6 +57,13 @@ struct sunxi_lcdc_reg {
 	u32 lvds_ana1;			/* 0x224 */
 };
 
+struct tcon_top {
+	u32 tcon_tv_setup;
+	u32 reserved0[6];
+	u32 de_port_sel;
+	u32 clk_gate_hdmi_src;
+};
+
 /*
  * LCDC register constants.
  */
@@ -113,6 +120,20 @@ struct sunxi_lcdc_reg {
 #endif
 #define SUNXI_LCDC_LVDS_ANA1_INIT1		(0x1f << 26 | 0x1f << 10)
 #define SUNXI_LCDC_LVDS_ANA1_INIT2		(0x1f << 16 | 0x1f << 00)
+
+/* TCON TOP definitions */
+#define SUNXI_TCON_TOP_DE_PORT0_MASK		(3 << 0)
+#define SUNXI_TCON_TOP_DE_PORT1_MASK		(3 << 4)
+#define SUNXI_TCON_TOP_DE_PORT0_TCON_LCD0	(0 << 0)
+#define SUNXI_TCON_TOP_DE_PORT0_TCON_LCD1	(1 << 0)
+#define SUNXI_TCON_TOP_DE_PORT0_TCON_TV0	(2 << 0)
+#define SUNXI_TCON_TOP_DE_PORT0_TCON_TV1	(3 << 0)
+#define SUNXI_TCON_TOP_HDMI_SRC_MASK		(3 << 28)
+#define SUNXI_TCON_TOP_HDMI_SRC_TCON_TV0	(1 << 28)
+#define SUNXI_TCON_TOP_HDMI_SRC_TCON_TV1	(2 << 28)
+#define SUNXI_TCON_TOP_CLK_GATE_DSI		(1 << 16)
+#define SUNXI_TCON_TOP_CLK_GATE_TCON_TV0	(1 << 20)
+#define SUNXI_TCON_TOP_CLK_GATE_TCON_TV1	(1 << 24)
 
 void lcdc_init(struct sunxi_lcdc_reg * const lcdc);
 void lcdc_enable(struct sunxi_lcdc_reg * const lcdc, int depth);
