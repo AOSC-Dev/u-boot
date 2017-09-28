@@ -242,6 +242,7 @@ config MACH_SUN8I_R40
 	select CPU_V7_HAS_VIRT
 	select ARCH_SUPPORT_PSCI
 	select SUNXI_GEN_SUN6I
+	select SUNXI_DE2
 	select SUPPORT_SPL
 	select SUNXI_DRAM_DW
 	select SUNXI_DRAM_DW_32BIT

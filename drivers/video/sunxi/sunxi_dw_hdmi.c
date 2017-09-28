@@ -246,7 +246,11 @@ static void sunxi_dw_hdmi_lcdc_init(int mux, const struct display_timing *edid,
 		(struct sunxi_ccm_reg *)SUNXI_CCM_BASE;
 	int div = sunxi_dw_hdmi_get_divider(edid->pixelclock.typ);
 	struct sunxi_lcdc_reg *lcdc;
+#ifdef CONFIG_MACH_SUN8I_R40
+	struct tcon_top *tcon_top;
+#endif
 
+#ifndef CONFIG_MACH_SUN8I_R40
 	if (mux == 0) {
 		lcdc = (struct sunxi_lcdc_reg *)SUNXI_LCD0_BASE;
 
@@ -268,6 +272,34 @@ static void sunxi_dw_hdmi_lcdc_init(int mux, const struct display_timing *edid,
 		writel(CCM_LCD1_CTRL_GATE | CCM_LCD1_CTRL_M(div),
 		       &ccm->lcd1_clk_cfg);
 	}
+#else
+	lcdc = (struct sunxi_lcdc_reg *)SUNXI_TCON_TV0_BASE;
+	tcon_top = (struct tcon_top *)SUNXI_TCON_TOP_BASE;
+
+	/* Reset TCON_TOP */
+	clrbits_le32(&ccm->ahb_reset1_cfg, 1 << AHB_RESET_OFFSET_TCON_TOP);
+	setbits_le32(&ccm->ahb_reset1_cfg, 1 << AHB_RESET_OFFSET_TCON_TOP);
+
+	/* Enable TCON_TOP */
+	setbits_le32(&ccm->ahb_gate1, 1 << AHB_GATE_OFFSET_TCON_TOP);
+
+	/* Set HDMI and DE port0 to TCON_TV0 */
+	clrsetbits_le32(&tcon_top->de_port_sel, SUNXI_TCON_TOP_DE_PORT0_MASK,
+			SUNXI_TCON_TOP_DE_PORT0_TCON_TV0);
+	clrsetbits_le32(&tcon_top->clk_gate_hdmi_src,
+			SUNXI_TCON_TOP_HDMI_SRC_MASK,
+			SUNXI_TCON_TOP_HDMI_SRC_TCON_TV0);
+	setbits_le32(&tcon_top->clk_gate_hdmi_src,
+		     SUNXI_TCON_TOP_CLK_GATE_TCON_TV0);
+
+	/* Deassert reset of TCON_TV0 */
+	setbits_le32(&ccm->ahb_reset1_cfg, 1 << AHB_RESET_OFFSET_TCON_TV0);
+
+	/* Clock on TCON_TV0 */
+	setbits_le32(&ccm->ahb_gate1, 1 << AHB_GATE_OFFSET_TCON_TV0);
+	writel(CCM_LCD0_CTRL_GATE | CCM_LCD0_CTRL_M(div),
+	       &ccm->tcon_tv0_clk_cfg);
+#endif
 
 	lcdc_init(lcdc);
 	lcdc_tcon1_mode_set(lcdc, edid, false, false);

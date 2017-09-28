@@ -263,7 +263,8 @@ static int sunxi_de2_probe(struct udevice *dev)
 					 "sunxi_dw_hdmi", &disp);
 	if (!ret) {
 		int mux;
-		if (IS_ENABLED(CONFIG_MACH_SUNXI_H3_H5))
+		if (IS_ENABLED(CONFIG_MACH_SUNXI_H3_H5) ||
+		    IS_ENABLED(CONFIG_MACH_SUN8I_R40))
 			mux = 0;
 		else
 			mux = 1;
