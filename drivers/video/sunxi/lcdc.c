@@ -306,6 +306,9 @@ void lcdc_pll_set(struct sunxi_ccm_reg *ccm, int tcon, int dotclock,
 #ifndef CONFIG_SUNXI_DE2
 		writel(CCM_LCD_CH0_CTRL_GATE | CCM_LCD_CH0_CTRL_RST | pll,
 		       &ccm->lcd0_ch0_clk_cfg);
+#elif defined(CONFIG_MACH_SUN8I_R40)
+		writel(CCM_LCD_CH0_CTRL_GATE | CCM_LCD_CH0_CTRL_RST | pll,
+		       &ccm->tcon_lcd0_clk_cfg);
 #else
 		writel(CCM_LCD_CH0_CTRL_GATE | CCM_LCD_CH0_CTRL_RST | pll,
 		       &ccm->lcd0_clk_cfg);

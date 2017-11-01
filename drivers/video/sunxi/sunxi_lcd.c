@@ -39,8 +39,13 @@ static int sunxi_lcd_enable(struct udevice *dev, int bpp,
 {
 	struct sunxi_ccm_reg * const ccm =
 	       (struct sunxi_ccm_reg *)SUNXI_CCM_BASE;
+#ifndef CONFIG_MACH_SUN8I_R40
 	struct sunxi_lcdc_reg * const lcdc =
 	       (struct sunxi_lcdc_reg *)SUNXI_LCD0_BASE;
+#else
+	struct sunxi_lcdc_reg * const lcdc =
+	       (struct sunxi_lcdc_reg *)SUNXI_TCON_LCD0_BASE;
+#endif
 	struct sunxi_lcd_priv *priv = dev_get_priv(dev);
 	struct udevice *backlight;
 	int clk_div, clk_double, ret;
