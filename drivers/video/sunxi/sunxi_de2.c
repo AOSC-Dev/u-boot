@@ -330,17 +330,21 @@ int sunxi_simplefb_setup(void *blob)
 	struct udevice *de2, *hdmi, *lcd;
 	struct video_priv *de2_priv;
 	struct video_uc_platdata *de2_plat;
+#ifndef CONFIG_MACH_SUN8I_R40
 	int mux;
+#endif
 	int offset, ret;
 	u64 start, size;
 	const char *pipeline = NULL;
 
 	debug("Setting up simplefb\n");
 
+#ifndef CONFIG_MACH_SUN8I_R40
 	if (IS_ENABLED(CONFIG_MACH_SUNXI_H3_H5))
 		mux = 0;
 	else
 		mux = 1;
+#endif
 
 	/* Skip simplefb setting if DE2 / HDMI is not present */
 	ret = uclass_find_device_by_name(UCLASS_VIDEO,
@@ -358,10 +362,14 @@ int sunxi_simplefb_setup(void *blob)
 	if (ret) {
 		debug("HDMI not present\n");
 	} else if (device_active(hdmi)) {
+#ifndef CONFIG_MACH_SUN8I_R40
 		if (mux == 0)
 			pipeline = "mixer0-lcd0-hdmi";
 		else
 			pipeline = "mixer1-lcd1-hdmi";
+#else
+		pipeline = "mixer0-tcon_tv0-hdmi";
+#endif
 	} else {
 		debug("HDMI present but not probed\n");
 	}
